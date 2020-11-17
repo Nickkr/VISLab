@@ -1,6 +1,5 @@
 package de.hska.iwi.vislab.lab2.example;
 
-import javax.swing.text.html.parser.Entity;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
