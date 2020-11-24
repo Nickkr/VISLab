@@ -1,5 +1,9 @@
 package de.hska.iwi.vislab.lab2.example;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonReaderFactory;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -12,6 +16,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+
+import java.io.StringReader;
 
 public class HelloWorldTest {
 
@@ -52,23 +58,38 @@ public class HelloWorldTest {
 
 	@Test
 	public void testFibonacciNumber() {
+		JsonReaderFactory factory = Json.createReaderFactory(null);
+
 		Response delResponse = target.path("fibonaccinumber").request().accept(MediaType.TEXT_PLAIN).delete();
 		assertEquals(204, delResponse.getStatus());
-		String response = target.path("fibonaccinumber").request().accept(MediaType.TEXT_PLAIN).post(null, String.class);
-		assertEquals(0, Integer.parseInt(response));
+		String response = target.path("fibonaccinumber").request().accept(MediaType.APPLICATION_JSON).post(null, String.class);
+
+		StringReader stringReader = new StringReader(response);
+		JsonReader reader = factory.createReader(stringReader);
+		JsonObject obj = reader.readObject();
+
+		assertEquals(0, obj.getInt("value"));
 
 		int max = 25;
-		int result = 1;
+		String result = "";
 		for (int i = 1; i <= max; i++) {
-			result = Integer.parseInt(target.path("fibonaccinumber").request().accept(MediaType.TEXT_PLAIN).post(null, String.class));
+			result = target.path("fibonaccinumber").request().accept(MediaType.APPLICATION_JSON).post(null, String.class);
 			System.out.println(result);
 		}
 		// test the 25th f*-nr
-		assertEquals(75025, result);
+		stringReader = new StringReader(result);
+		reader = factory.createReader(stringReader);
+		obj = reader.readObject();
+		assertEquals(75025, obj.getInt("value"));
 
 		delResponse = target.path("fibonaccinumber").request().accept(MediaType.TEXT_PLAIN).delete();
 		assertEquals(204, delResponse.getStatus());
-		response = target.path("fibonaccinumber").request().accept(MediaType.TEXT_PLAIN).post(null, String.class);
-		assertEquals(0, Integer.parseInt(response));
+		response = target.path("fibonaccinumber").request().accept(MediaType.APPLICATION_JSON).post(null, String.class);
+		
+		stringReader = new StringReader(response);
+		reader = factory.createReader(stringReader);
+		obj = reader.readObject();
+		
+		assertEquals(0, obj.getInt("value"));
 	}
 }

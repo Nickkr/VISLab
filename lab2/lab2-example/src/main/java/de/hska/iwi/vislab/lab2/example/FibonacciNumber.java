@@ -19,12 +19,19 @@ public class FibonacciNumber {
      * @return String that will be returned as a text/plain response.
      */
     @POST
-    @Produces(MediaType.TEXT_PLAIN)
-    public int getIt() {
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getIt() {
         int n = this.readPreference();
         int next = n + 1;
         this.savePreference(next);
-        return computeFibonacci(n);
+        String json = "{\"value\": " + computeFibonacci(n) + "}";
+        return json;
+    }
+
+    
+    @DELETE
+    public void resetIt() {
+        this.savePreference(0);
     }
 
     private int computeFibonacci(int n) {
@@ -44,10 +51,5 @@ public class FibonacciNumber {
         Preferences prefs = Preferences.userNodeForPackage(FibonacciNumber.class);
 
         return prefs.getInt("number", 0);
-    }
-
-    @DELETE
-    public void resetIt() {
-        this.savePreference(0);
     }
 }
