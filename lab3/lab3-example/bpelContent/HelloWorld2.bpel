@@ -38,7 +38,7 @@
    <variables>
      <variable name="myVar" messageType="test:HelloMessage"/>
      <variable name="tmpVar" type="xsd:string"/>
-     <variable name="myStringLength" messageType="test:HelloMessage"/>
+     <variable name="myStringLength" type="xsd:string"/>
    </variables>
 
    <sequence>
