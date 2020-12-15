@@ -55,13 +55,8 @@
               <from variable="myVar" part="TestPart"/>
               <to variable="tmpVar"/>
           </copy>
-          <copy>
-              <from>concat($tmpVar,' World')</from>
-              <to variable="myVar" part="TestPart"/>
-          </copy>
       </assign>
 
-<!--
       <if>
         <condition>string-length($tmpVar) &gt; 10</condition>
         <assign>
@@ -79,7 +74,22 @@
           </assign>
         </else>
       </if>
--->
+
+      <assign name="assign2">
+          <copy>
+              <from>concat($tmpVar,' ')</from>
+              <to variable="tmpVar"/>
+          </copy>
+          <copy>
+              <from>concat($tmpVar, $myStringLength)</from>
+              <to variable="tmpVar"/>
+          </copy>
+          <copy>
+              <from>concat($tmpVar,' World')</from>
+              <to variable="myVar" part="TestPart"/>
+          </copy>
+      </assign>
+
       <reply name="end"
               partnerLink="helloPartnerLink"
               portType="test:HelloPortType"
