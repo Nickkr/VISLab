@@ -9,10 +9,12 @@ import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
-import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
+import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @SpringBootApplication
@@ -48,6 +50,27 @@ public class HelloOauthWebApplication {
 		return "greet";
 	}
 
+	@RequestMapping("/fibonacci")
+	public String getFibonacciView(Model model) {
+		model.addAttribute("fibNumber", '-');
+		return "fibonacci";
+	}
+
+	@PostMapping("/fibonacci")
+	public String nextFibonacciNumber(Model model) {
+		FibonacciNumber fibNumber = restTemplate.postForObject(baseUrl + "/fibonaccinumber", null ,FibonacciNumber.class);
+		model.addAttribute("fibNumber", fibNumber.value);
+		return "fibonacci::fibNumber";
+		
+	}
+
+	@DeleteMapping("/fibonacci")
+	public String resetFibonacciNumber(Model model) {
+		restTemplate.delete(baseUrl + "/fibonaccinumber");
+		model.addAttribute("fibNumber", '-');
+		return "fibonacci::fibNumber";
+	}
+
 	@Bean
 	public OAuth2RestOperations restTemplate(OAuth2ClientContext oauth2ClientContext) {
 		return new OAuth2RestTemplate(resource(), oauth2ClientContext);
@@ -55,11 +78,10 @@ public class HelloOauthWebApplication {
 
 	@Bean
 	protected OAuth2ProtectedResourceDetails resource() {
-		AuthorizationCodeResourceDetails resource = new AuthorizationCodeResourceDetails();
+		ClientCredentialsResourceDetails resource = new ClientCredentialsResourceDetails();
 		resource.setAccessTokenUri(tokenUrl);
-		resource.setUserAuthorizationUri(authorizeUrl);
-		resource.setClientId("my-trusted-client");
+		resource.setClientId("my-client-with-secret");
+		resource.setClientSecret("secret");
 		return resource;
 	}
-
 }
